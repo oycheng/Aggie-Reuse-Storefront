@@ -11,7 +11,7 @@ class Access:
     def __del__(self):
         self.dbConn.close()
     def extract(self):
-        dataDf = pd.read_sql_query("SELECT * FROM `barcode`", con = self.dbConn)
+        dataDf = pd.read_sql_query("SELECT * FROM `inventory`", con = self.dbConn)
         return dataDf
 class Store:
     def __init__(self, dbName):
@@ -20,7 +20,7 @@ class Store:
     def store(self, data):
         dataDF = pd.DataFrame(data)
         try:
-            dataDF.to_sql("barcode", self.dbConn, if_exists='append', index = False)
+            dataDF.to_sql("inventory", self.dbConn, if_exists='append', index = False)
         except ValueError as error:
             print("Failed to insert:", error)
         self.dbConn.commit()
@@ -32,7 +32,11 @@ if __name__ == "__main__":
     while True:
         barIn = "false"
         while not barIn.isnumeric():
-            barIn = input()
+            barIn = input("enter barcode: ")
+            if barIn == "-1":
+                break
+        if barIn == "-1":
+            break
         data = {"barcode" : [barIn]}
 
         store = Store("someDB.db")
