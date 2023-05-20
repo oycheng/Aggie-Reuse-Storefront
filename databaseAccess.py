@@ -4,6 +4,8 @@ import re
 import pandas as pd
 import sqlite3 as sql
 
+barCodeLength = 9
+
 class Access:
     def __init__(self, dbName):
         self.dbName = dbName
@@ -11,11 +13,10 @@ class Access:
     def _extract(self, location):
         dbConn = sql.connect(self.dbName)
         try:
-            dataDf = pd.read_sql_query("SELECT * FROM `" + location + "`", con = dbConn)
+            self.dataDf = pd.read_sql_query("SELECT * FROM `" + location + "`", con = dbConn)
         except:
-            dataDf = pd.DataFrame()
+            self.dataDf = pd.DataFrame()
         dbConn.close()
-        return dataDf
     def _duplicateCheck(self, data):
         if self.dataDf.empty:
             return True
@@ -26,7 +27,7 @@ class Access:
         else:
             return True
     def store(self, data, location):
-        self.dataDf = self._extract(location)
+        self._extract(location)
         inDataDf = pd.DataFrame(data)
         if(self._duplicateCheck(data)):
             dbConn = sql.connect(self.dbName)
@@ -36,33 +37,55 @@ class Access:
                 print("Failed to insert:", error)
             dbConn.commit()
             dbConn.close()
+        else:
+            print("item already exists")
     def reserve(self, barcode, location):
-        data = self._extract(location)
+        self._extract(location)
         data = self.dataDf.to_dict()
         barcodes = data["barcode"]
         barcodes_val = list(barcodes.values())
-        position = barcodes_val.index(barcode)
-        print(position)
-    def _update(self, newDataDf, location):
+        try:
+            position = barcodes_val.index(barcode)
+        except ValueError as error:
+            return
+        print(data["reserved"][position])
+        if data["reserved"][position] == "false":
+            data["reserved"][position] = "true"
+            self._update(data, location)
+        elif data["reserved"][position] == "true":
+            print("Item " + barcode + " is reserved")
+        else:
+            print("error")
+    def _update(self, newData, location):
+        newDataDf = pd.DataFrame(newData)
         dbConn = sql.connect(self.dbName)
         newDataDf.to_sql(location, dbConn, if_exists='replace', index=False)
         dbConn.close()
     def printDf(self, location):
-        print(self._extract(location))
+        self._extract(location)
+        print(self.dataDf)
         
 if __name__ == "__main__":
+    controls = ["add", "reserve"]
     database = Access("someDB.db")
-    location = "b"
+    location = "e"
     while True:
+        control = "false"
         barIn = "false"
-        while not barIn.isnumeric():
+        while not control in controls:
+            control = input("enter control: ")
+        while (not barIn.isnumeric()) or (len(barIn) != barCodeLength):
             barIn = input("enter barcode: ")
             if barIn == "-1":
                 break
         if barIn == "-1":
             break
-        data = {"barcode" : [barIn],
-                "price" : [10],
-                "reserved": ["false"]}
-        database.store(data, location)
+        if control == controls[0]:
+            data = {"barcode" : [barIn],
+                    "price" : [10],
+                    "reserved": ["false"]}
+            database.store(data, location)
+        elif control == controls[1]:
+            database.reserve(barIn, location)
+        
         database.printDf(location)
