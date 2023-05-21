@@ -12,15 +12,26 @@ bp = Blueprint('store', __name__)
 # route for store inventory managment
 @bp.route('/store/Items', methods=['GET'])
 def storeItems_get():
+    print("===============")
     try:
+        print(type(request))
+        print("=======11111========")
+        print(request.headers)
+        print("=======11111========")
+        # json_payload = json.loads(request)
         json_payload = request.get_json()
+        print("=======22222========")
 
         # unpack the request
         startIndex = json_payload["Start"]
         endIndex = json_payload["End"]
+        print("=======33333========")
         getTags = json_payload["TotalTags"]
         getPages = json_payload["TotalPages"]
-        selectTag = json_payload["SelectTag"]
+        print("=======44444========")
+        selectTag = json_payload["FilterBy"]
+        print("===============")
+        print(json_payload)
 
 
         # Handle GET request

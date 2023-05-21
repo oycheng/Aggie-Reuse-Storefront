@@ -56,7 +56,7 @@ def get_items(startIndex, endIndex, getTags, getPages, selectedTag):
             count += 1
         currentIndex += 1
 
-    response = {"Barcode": Barcode, "URL": imgURL, "Tags": Tags, "TotalTags": TotalTags, "TotalNumber": TotalNumber}
+    response = {"Barcode": Barcode, "imgURL": imgURL, "Tags": Tags, "TotalTags": TotalTags, "TotalNumber": TotalNumber}
     return response
 
 

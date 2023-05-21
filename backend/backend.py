@@ -1,9 +1,11 @@
 from flask import Flask
+from flask_cors import CORS
 from service.route_store import bp as store_bp
 from service.route_traffic import bp as traffic_bp
 
 
 app = Flask(__name__)
+CORS(app)
 
 # Register the routes Blueprints
 app.register_blueprint(store_bp)
