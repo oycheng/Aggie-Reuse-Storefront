@@ -5,10 +5,10 @@ import pickle
 barCodeLength = 9
 
 class Access:
-    def __init__(self, dbName):
+    def __init__(self, dbName = "storeDB.db"):
         self.dbName = dbName
         self.dataDf = pd.DataFrame()
-    def _extract(self, location):
+    def _extract(self, location = "inventory"):
         dbConn = sql.connect(self.dbName)
         try:
             self.dataDf = pd.read_sql_query("SELECT * FROM `" + location + "`", con = dbConn)
@@ -28,7 +28,7 @@ class Access:
         tags = input("Enter Tags: ")
         tags = tags.split()
         return pickle.dumps(tags)
-    def retrieveTags(self, barcode, location):
+    def retrieveTags(self, barcode, location = "inventory"):
         self._extract(location)
         data = self.dataDf.to_dict()
         position = list(data["barcode"].values()).index(barcode)
@@ -38,7 +38,7 @@ class Access:
         if image != "10":
             image = pickle.dumps(image)
         return image
-    def store(self, barcode, location):
+    def store(self, barcode, location = "inventory"):
         self._extract(location)
         if(not self._dupCheck(barcode)):
             data = {"barcode" : barcode,
@@ -55,7 +55,7 @@ class Access:
             dbConn.close()
         else:
             print("item already exists")
-    def removeItem(self, barcode, location):
+    def removeItem(self, barcode, location = "inventory"):
         self._extract(location)
         if not self._dupCheck(barcode):
             print("Item not in inventory")
@@ -72,12 +72,12 @@ class Access:
                 itemdata.pop(position)
                 data[item] = itemdata
             self._update(data, location)
-    def _update(self, newData, location):
+    def _update(self, newData, location = "inventory"):
         newDataDf = pd.DataFrame(newData)
         dbConn = sql.connect(self.dbName)
         newDataDf.to_sql(location, dbConn, if_exists='replace', index=False)
         dbConn.close()
-    def reserve(self, barcode, location):
+    def reserve(self, barcode, location = "inventory"):
         self._extract(location)
         if not self._dupCheck(barcode):
             print("Item does not exist")
@@ -92,7 +92,7 @@ class Access:
             self._update(data, location)
         else:
             print("Item " + barcode + " is reserved")
-    def unreserve(self, barcode, location):
+    def unreserve(self, barcode, location = "inventory"):
         if not self._dupCheck(barcode):
             print("Item does not exist")
             return
@@ -103,7 +103,7 @@ class Access:
         position = barcodes_val.index(barcode)
         data["reserved"][position] = "false"
         self._update(data, location)
-    def printDf(self, location):
+    def printDf(self, location = "inventory"):
         self._extract(location)
         data = self.dataDf.to_dict()
         if bool(data):
@@ -113,8 +113,7 @@ class Access:
         
 def Run():
     controls = ["quit", "show", "add", "remove", "reserve", "unreserve"]
-    database = Access("someDB.db")
-    location = "db"
+    database = Access()
     while True:
         control = "false"
         barIn = "false"
@@ -123,18 +122,18 @@ def Run():
         if control == controls[0]:
             break
         elif control == controls[1]:
-            database.printDf(location)
+            database.printDf()
         else:
             while (not barIn.isnumeric()) or (len(barIn) != barCodeLength):
                 barIn = input("enter barcode: ")
             if control == controls[2]:
-                database.store(barIn, location)
+                database.store(barIn)
             elif control == controls[3]:
-                database.removeItem(barIn, location)
+                database.removeItem(barIn)
             elif control == controls[4]:
-                database.reserve(barIn, location)
+                database.reserve(barIn)
             elif control == controls[5]:
-                database.unreserve(barIn, location)
+                database.unreserve(barIn)
                 
 if __name__ == "__main__":
     Run()
