@@ -2,6 +2,7 @@ from flask import Flask, request, Blueprint, jsonify
 import json
 import logging
 from .databaseFunction import *
+from config import databaseName, location
 
 bp = Blueprint('store', __name__)
 # logging.debug(' log message')
@@ -9,7 +10,7 @@ bp = Blueprint('store', __name__)
 
 # route for store inventory managment
 @bp.route('/store', methods=['GET'])
-def handler():
+def store_get():
     try:
         json_payload = request.get_json()
         barcode = json_payload["barcode"]
@@ -34,11 +35,9 @@ def handler():
         return f'Internal server error: {e}', 500
 
 # Add Item to database
-@bd.route('/store', methods=['POST'])
-def handler():
+@bp.route('/store', methods=['POST'])
+def store_post():
     try:
-        global databaseName
-        global location
         json_payload = request.get_json()
         barcode = json_payload["barcode"]
         

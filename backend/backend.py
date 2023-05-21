@@ -1,15 +1,13 @@
 from flask import Flask
-from service.test2 import bp as routes_bp
+from service.route_store import bp as store_bp
+from service.route_traffic import bp as traffic_bp
 
 
 app = Flask(__name__)
 
-# gloable variable
-databaseName = "Invertory"
-location = "1"
-
 # Register the routes Blueprints
-app.register_blueprint(routes_bp)
+app.register_blueprint(store_bp)
+app.register_blueprint(traffic_bp)
 
 # Run the application
 if __name__ == '__main__':
