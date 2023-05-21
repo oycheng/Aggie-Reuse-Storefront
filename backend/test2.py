@@ -1,6 +1,10 @@
 from flask import Flask, request, jsonify
 import json
-from databaseAccess import Store
+from dataBase import Access
+import logging
+
+
+# logging.debug(' log message')
 
 app = Flask(__name__)
 
@@ -13,12 +17,19 @@ def handle_data():
         return jsonify(data)
     elif request.method == 'POST':
         # Handle POST request
-        request_data = request.get_json()
+        json_payload = request.get_json()
+
+        barcode = json_payload["barcode"]
+        database = Access("someOtherDB.db")
+        data = {"barcode" : [barcode], "price" : [10], "reserved": ["false"]}
+        location = "b"
+        database.store(data, location)
+        database.printDf(location)
         # Process the request data
         # ...
 
 
-        response_data = {'message': 'POST request received', 'data': request_data}
+        response_data = {'message': 'POST request executed', 'data': barcode}
         return jsonify(response_data)
 
 
