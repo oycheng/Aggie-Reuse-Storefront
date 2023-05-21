@@ -4,6 +4,7 @@ import logging
 from .databaseFunction import *
 from config import databaseName, location
 
+
 bp = Blueprint('store', __name__)
 # logging.debug(' log message')
 
@@ -26,7 +27,6 @@ def storeItems_get():
         response_data = get_items(startIndex, endIndex, getTags, getPages, selectTag)
         response_data = {'message': 'GET request received'}
         return jsonify(response_data)
-
     # exception
     except KeyError as e:
         # Handle missing field error
@@ -35,7 +35,21 @@ def storeItems_get():
         # Handle other exceptions
         return f'Internal server error: {e}', 500
 
-# Add Item to database
+# route add a image of item to database
+@bp.route('/store/Items', methods=['POST'])
+def storeItems_post():
+    if 'image' in request.files:
+        image = request.files['image']
+        response = add_items(image)
+        
+        if (response == 'success'):
+            return 'Image uploaded successfully.'
+        else:
+            return 'Faild to upload Image.'
+
+    return 'No image file found in the request.'
+
+# Add Barcode to database
 @bp.route('/store', methods=['POST'])
 def store_post():
     try:

@@ -4,6 +4,7 @@ import logging
 from .databaseFunction import *
 from config import databaseName, location
 
+
 bp = Blueprint('traffic', __name__)
 # logging.debug(' log message')
 
@@ -39,18 +40,9 @@ def traffic_get():
 @bp.route('/traffic', methods=['POST'])
 def traffic_post():
     try:
-        json_payload = request.get_json()
-        time = json_payload["time"]
+        # database function ======================================
 
-        # Handle GET request
-
-        # body
-        #
-        #
-        #
-        #
-
-        response_data = {'message': 'traffic POST request received'}
+        response_data = {'message': 'traffic POST request executed'}
         return jsonify(response_data)
 
     # exception
