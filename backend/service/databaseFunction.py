@@ -49,12 +49,12 @@ def get_items(startIndex, endIndex, getTags, getPages, selectedTag):
         currentTags = database.retrieveTags(inventory[currentIndex]) # get tags of current item from database
         
         if (selectedTag == "none" or hasTag(currentTags, selectedTag)):
-            if (database.checkReserve(inventory[currentIndex], location) == -1):
-                Barcode += [inventory[currentIndex]]
-                imgURL += ["../../backend/service/dataBase/img/" + inventory[currentIndex] + ".png"]
+            #if (database.checkReserve(inventory[currentIndex], location) == -1):
+            Barcode += [inventory[currentIndex]]
+            imgURL += ["../../backend/service/dataBase/img/" + inventory[currentIndex] + ".png"]
 
-                Tags += [currentTags]
-                count += 1
+            Tags += [currentTags]
+            count += 1
         
         currentIndex += 1
 
