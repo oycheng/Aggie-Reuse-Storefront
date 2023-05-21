@@ -9,20 +9,21 @@ bp = Blueprint('store', __name__)
 
 
 # route for store inventory managment
-@bp.route('/store', methods=['GET'])
-def store_get():
+@bp.route('/store/Items', methods=['GET'])
+def storeItems_get():
     try:
         json_payload = request.get_json()
-        barcode = json_payload["barcode"]
+
+        # unpack the request
+        startIndex = json_payload["Start"]
+        endIndex = json_payload["End"]
+        getTags = json_payload["TotalTags"]
+        getPages = json_payload["TotalPages"]
+        selectTag = json_payload["SelectTag"]
+
 
         # Handle GET request
-
-        # body
-        #
-        #
-        #
-        #
-
+        response_data = get_items(startIndex, endIndex, getTags, getPages, selectTag)
         response_data = {'message': 'GET request received'}
         return jsonify(response_data)
 
