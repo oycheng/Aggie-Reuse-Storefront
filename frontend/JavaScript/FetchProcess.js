@@ -53,6 +53,7 @@ window.addEventListener('load', function() {
 
 var button = document.getElementById('prevButton');
 button.addEventListener('click', function() {
+    ResetArray();
     if(pageNumber > 0){
         // Create JSON data for the request on button click
         pageNumber -= 1;
@@ -93,6 +94,7 @@ button.addEventListener('click', function() {
 
 var button = document.getElementById('nextButton');
 button.addEventListener('click', function() {
+    ResetArray();
     if(pageNumber < pageTotal){
         // Create JSON data for the request on button click
         pageNumber += 1;
@@ -111,7 +113,6 @@ button.addEventListener('click', function() {
         var xhr3 = new XMLHttpRequest();
         xhr3.open('GET', 'http://127.0.0.1:5000/store/Items/get');
         xhr3.setRequestHeader('Content-Type', 'application/json');
-        xhr3.setRequestHeader('Content-Length', '96');
         
         xhr3.onreadystatechange = function() {
             if (xhr3.readyState === XMLHttpRequest.DONE && xhr3.status === 200) {
@@ -133,6 +134,13 @@ button.addEventListener('click', function() {
         xhr3.send(jsonString3);
     }
 });
+
+function ResetArray(){
+    for(var i = 0; i < itemBarcode.length; i++){
+        itemBarcode[i] = 0;
+        itemURL[i] = "";
+    }
+}
 
 function UpdateGrid(){
 
@@ -164,10 +172,11 @@ function UpdateGrid(){
 
 var button = document.getElementById('order');
 button.addEventListener('click', function() {
+    ResetArray();
     // Create JSON data for the request on button click
     pageNumber += 1;
     var jsonData4 = {
-        Order: ShoppingCart
+        barcodes: ShoppingCart
     };
 
     // Convert JSON to string for the request on button click
@@ -175,9 +184,8 @@ button.addEventListener('click', function() {
 
     // Create a new XMLHttpRequest object for the request on button click
     var xhr4 = new XMLHttpRequest();
-    xhr4.open('GET', 'http://127.0.0.1:5000/store/reserve');
+    xhr4.open('POST', 'http://127.0.0.1:5000/store/reserve');
     xhr4.setRequestHeader('Content-Type', 'application/json');
-    xhr4.setRequestHeader('Content-Length', '96');
     
     xhr4.onreadystatechange = function() {
         if (xhr4.readyState === XMLHttpRequest.DONE && xhr4.status === 200) {

@@ -82,7 +82,7 @@ def store_post():
 
 
 # Put a Reservation
-@bp.route('/store/reserve', methods=['PUT'])
+@bp.route('/store/reserve', methods=['POST'])
 def reserve():
     try:
         # Get the JSON payload from the request
@@ -105,7 +105,7 @@ def reserve():
         return f'Internal server error: {e}', 500
 
 # Cancel Reservation
-@bp.route('/store/unreserve', methods=['PUT'])
+@bp.route('/store/unreserve', methods=['POST'])
 def cancleReserve():
     try:
         # Get the JSON payload from the request

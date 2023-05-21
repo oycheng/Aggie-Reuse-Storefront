@@ -34,7 +34,7 @@ class Access:
         position = list(data["barcode"].values()).index(barcode)
         tag = pickle.loads(data["tags"][position])
         return tag
-    def store(self, barcode, imageLink, location = "inventory", tagInput = "none none none none none"):
+    def store(self, barcode, imageLink = "link", location = "inventory", tagInput = "none none none none none"):
         self._extract(location)
         if(not self._dupCheck(barcode)):
             data = {"barcode" : barcode,
