@@ -1,13 +1,15 @@
 // Global variables for the JSON data and XHR objects
-var jsonData1, jsonData2, jsonData3;
-var jsonString1, jsonString2, jsonString3;
-var xhr1, xhr2, xhr3;
+var jsonData1, jsonData2, jsonData3, jsonData4;
+var jsonString1, jsonString2, jsonString3, jsonString4;
+var xhr1, xhr2, xhr3, xhr4;
 var pageNumber = 0;
 var pageTotal = 0;
 let itemBarcode = [9], itemQuantity = [9], itemURL = [9];
 let itemTags = [9][5];
+var itemLength;
 var tag = "none";
 var itemsPerPage = 9;
+let ShoppingCart = [];
 
 
 window.addEventListener('load', function() {
@@ -32,7 +34,8 @@ window.addEventListener('load', function() {
             var response1 = JSON.parse(xhr1.responseText);
             console.log(response1);
             pageTotal = response1.TotalPages;
-            for (var i = 0; i < 9; i++) {
+            itemLength = response1.Barcode.length;
+            for (var i = 0; i < itemLength; i++) {
                 //replace
                 itemBarcode[i] = response1.Barcode[i];
                 itemURL[i] = response1.imgURL[i];
@@ -40,6 +43,7 @@ window.addEventListener('load', function() {
                 //     itemTags[i][j] = response1.Tags[i][j];
                 // }
             }
+            UpdateGrid();
         }
     };
     console.log(jsonString1);
@@ -71,7 +75,8 @@ button.addEventListener('click', function() {
             if (xhr2.readyState === XMLHttpRequest.DONE && xhr2.status === 200) {
                 var response2 = JSON.parse(xhr2.responseText);
                 console.log(response2);
-                for (var i = 0; i < 9; i++) {
+                itemLength = response2.Barcode.length;
+                for (var i = 0; i < itemLength; i++) {
                     //replace
                     itemBarcode[i] = response2.Barcode[i];
                     itemURL[i] = response2.imgURL[i];
@@ -111,8 +116,9 @@ button.addEventListener('click', function() {
         xhr3.onreadystatechange = function() {
             if (xhr3.readyState === XMLHttpRequest.DONE && xhr3.status === 200) {
                 var response3 = JSON.parse(xhr3.responseText);
-                console.log(response3);
-                for (var i = 0; i < 9; i++) {
+                console.log(response3.imgURL);
+                itemLength = response3.Barcode.length;
+                for (var i = 0; i < itemLength; i++) {
                     //replace
                     itemBarcode[i] = response3.Barcode[i];
                     // itemQuantity[i] = response3.Quantity[i];
@@ -134,7 +140,7 @@ function UpdateGrid(){
     gridContainer.innerHTML = '';
 
     // Create grid items dynamically based on the data
-    for (var i = 0; i < itemsPerPage; i++) {
+    for (var i = 0; i < itemLength; i++) {
         var itemId = itemBarcode[i];
         var gridItem = document.createElement('div');
         gridItem.className = 'grid-item';
@@ -147,9 +153,39 @@ function UpdateGrid(){
         image.addEventListener('click', function() {
             var itemId = this.dataset.id;
             console.log('Clicked Image ID:', itemId);
+            ShoppingCart.push("itemId");
+            $('#itemId li a').css('color', 'blue');
         });
 
         gridItem.appendChild(image);
         gridContainer.appendChild(gridItem);
     }
 }
+
+var button = document.getElementById('nextButton');
+button.addEventListener('order', function() {
+    if(pageNumber < pageTotal){
+        // Create JSON data for the request on button click
+        pageNumber += 1;
+        var jsonData4 = {
+            Order: ShoppingCart
+        };
+
+        // Convert JSON to string for the request on button click
+        var jsonString4 = JSON.stringify(jsonData4);
+
+        // Create a new XMLHttpRequest object for the request on button click
+        var xhr4 = new XMLHttpRequest();
+        xhr4.open('GET', 'http://127.0.0.1:5000/store/reserve');
+        xhr4.setRequestHeader('Content-Type', 'application/json');
+        xhr4.setRequestHeader('Content-Length', '96');
+        
+        xhr4.onreadystatechange = function() {
+            if (xhr4.readyState === XMLHttpRequest.DONE && xhr4.status === 200) {
+                var response4 = JSON.parse(xhr4.responseText);
+                console.log(response4.imgURL);
+            }
+        };
+        xhr4.send(jsonString4);
+    }
+});

@@ -41,7 +41,7 @@ class Access:
                     "tags" : [self._pickleTags(tagInput)],
                     "image" : [imageLink],
                     "reserved" : ["false"],
-                    "reserve time" : [datetime.datetime.now()]}
+                    "reserve time" : ["false"]}
             inDataDf = pd.DataFrame(data)
             dbConn = sql.connect(self.dbName)
             try:
@@ -74,7 +74,7 @@ class Access:
         dbConn = sql.connect(self.dbName)
         newDataDf.to_sql(location, dbConn, if_exists='replace', index=False)
         dbConn.close()
-    def reserve(self, barcode, location = "inventory"):
+    def reserve(self, barcode, reserveId = 000000000, location = "inventory"):
         self._extract(location)
         if not self._dupCheck(barcode):
             print("Item does not exist")
@@ -84,11 +84,23 @@ class Access:
         barcodes_val = list(barcodes.values())
         position = barcodes_val.index(barcode)
         if data["reserved"][position] == "false":
-            reserveId = input("reserve ID: ")
             data["reserved"][position] = reserveId
+            data["reserve time"][position] = datetime.datetime.now()
             self._update(data, location)
         else:
             print("Item " + barcode + " is reserved")
+    def checkReserve(self, barcode, location = "inventory"):
+        self._extract(location)
+        if not self._dupCheck(barcode):
+            print("Item does not exist")
+            return -1
+        data = self.dataDf.to_dict()
+        barcodes = data["barcode"]
+        barcodes_val = list(barcodes.values())
+        position = barcodes_val.index(barcode)
+        if data["reserved"][position] != "false":
+            return -1
+        return 0
     def unreserve(self, barcode, location = "inventory"):
         if not self._dupCheck(barcode):
             print("Item does not exist")
