@@ -6,7 +6,7 @@ var pageNumber = 0;
 var pageTotal = 0;
 let itemBarcode = [9], itemQuantity = [9], itemURL = [9];
 let itemTags = [9][5];
-var tag = "none none none none none";
+var tag = "none";
 var itemsPerPage = 9;
 
 
@@ -25,7 +25,7 @@ window.addEventListener('load', function() {
 
     // Create a new XMLHttpRequest object for the request on page load
     xhr1 = new XMLHttpRequest();
-    xhr1.open('GET', 'http://127.0.0.1:5000/store/Items');
+    xhr1.open('POST', 'http://127.0.0.1:5000/store/Items/get', true);
     xhr1.setRequestHeader('Content-Type', 'application/json');
     xhr1.onreadystatechange = function() {
         if (xhr1.readyState === XMLHttpRequest.DONE && xhr1.status === 200) {
@@ -36,9 +36,9 @@ window.addEventListener('load', function() {
                 //replace
                 itemBarcode[i] = response1.Barcode[i];
                 itemURL[i] = response1.imgURL[i];
-                for(var j = 0; j < 5; j++){
-                    itemTags[i][j] = response1.Tags[i][j];
-                }
+                // for(var j = 0; j < 5; j++){
+                //     itemTags[i][j] = response1.Tags[i][j];
+                // }
             }
         }
     };
@@ -65,7 +65,7 @@ button.addEventListener('click', function() {
 
         // Create a new XMLHttpRequest object for the request on button click
         var xhr2 = new XMLHttpRequest();
-        xhr2.open('GET', 'http://127.0.0.1:5000/store/Items');
+        xhr2.open('GET', 'http://127.0.0.1:5000/store/Items/get');
         xhr2.setRequestHeader('Content-Type', 'application/json');
         xhr2.onreadystatechange = function() {
             if (xhr2.readyState === XMLHttpRequest.DONE && xhr2.status === 200) {
@@ -75,9 +75,9 @@ button.addEventListener('click', function() {
                     //replace
                     itemBarcode[i] = response2.Barcode[i];
                     itemURL[i] = response2.imgURL[i];
-                    for(var j = 0; j < 5; j++){
-                        itemTags[i][j] = response2.Tags[i][j];
-                    }
+                    // for(var j = 0; j < 5; j++){
+                    //     itemTags[i][j] = response2.Tags[i][j];
+                    // }
                 }
                 UpdateGrid();
             }
@@ -104,7 +104,7 @@ button.addEventListener('click', function() {
 
         // Create a new XMLHttpRequest object for the request on button click
         var xhr3 = new XMLHttpRequest();
-        xhr3.open('GET', 'http://127.0.0.1:5000/store/Items');
+        xhr3.open('GET', 'http://127.0.0.1:5000/store/Items/get');
         xhr3.setRequestHeader('Content-Type', 'application/json');
         xhr3.setRequestHeader('Content-Length', '96');
         
@@ -117,9 +117,9 @@ button.addEventListener('click', function() {
                     itemBarcode[i] = response3.Barcode[i];
                     // itemQuantity[i] = response3.Quantity[i];
                     itemURL[i] = response3.imgURL[i];
-                    for(var j = 0; j < 5; j++){
-                        itemTags[i][j] = response3.Tags[i][j];
-                    }
+                    // for(var j = 0; j < 5; j++){
+                    //     itemTags[i][j] = response3.Tags[i][j];
+                    // }
                 }
                 UpdateGrid();
             }
