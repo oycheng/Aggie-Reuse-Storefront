@@ -13,4 +13,6 @@ app.register_blueprint(traffic_bp)
 
 # Run the application
 if __name__ == '__main__':
+    # change host to local IP address for hardware public request
+    # app.run(host="172.20.10.3")
     app.run()

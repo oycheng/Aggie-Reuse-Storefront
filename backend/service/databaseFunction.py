@@ -87,6 +87,7 @@ def reserve_items(barcodes):
     database = Access(databaseName)
     for i in range(len(barcodes)):
         database.reserve(barcodes[i], location)
+        print("reserved: " + str(barcodes[i]))
 
 
 def unreserve_items(barcodes):

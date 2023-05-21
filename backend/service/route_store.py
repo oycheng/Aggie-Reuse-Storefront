@@ -2,12 +2,20 @@ from flask import Flask, request, Blueprint, jsonify
 import json
 import logging
 from .databaseFunction import *
+from .dataBase import Access
 from config import databaseName, location
 
 
 bp = Blueprint('store', __name__)
 # logging.debug(' log message')
 
+# route for store inventory managment
+@bp.route('/debug/show', methods=['GET'])
+def debugShow():
+    name = "/dataBase/" + databaseName
+    database = Access(databaseName)
+    database.printDf()
+    return "done"
 
 # route for store inventory managment
 @bp.route('/store/Items/get', methods=['POST'])
@@ -85,7 +93,7 @@ def reserve():
 
         reserve_items(barcodes)
 
-        returnData = {'message': 'Item reserved', 'barcode': barcode}
+        returnData = {'message': 'Item reserved', 'barcodes': barcodes}
         return jsonify(returnData)
         
     # exception
@@ -108,7 +116,7 @@ def cancleReserve():
 
         unreserve_items(barcodes)
 
-        returnData = {'message': 'Reservation canceled', 'barcode': barcode}
+        returnData = {'message': 'Reservation canceled', 'barcodes': barcodes}
         return jsonify(returnData)
         
     # exception

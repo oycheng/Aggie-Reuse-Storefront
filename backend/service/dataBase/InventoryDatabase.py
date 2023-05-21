@@ -74,7 +74,7 @@ class Access:
         dbConn = sql.connect(self.dbName)
         newDataDf.to_sql(location, dbConn, if_exists='replace', index=False)
         dbConn.close()
-    def reserve(self, barcode, reserveId = 000000000, location = "inventory"):
+    def reserve(self, barcode, reserveId = "123123123", location = "inventory"):
         self._extract(location)
         if not self._dupCheck(barcode):
             print("Item does not exist")

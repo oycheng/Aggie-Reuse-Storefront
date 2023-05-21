@@ -12,28 +12,10 @@ bp = Blueprint('traffic', __name__)
 # route for get the traffic in some time period
 @bp.route('/traffic', methods=['GET'])
 def traffic_get():
-    try:
-        json_payload = request.get_json()
-        time = json_payload["time"]
+    # database function ======================================
 
-        # Handle GET request
-
-        # body
-        #
-        #
-        #
-        #
-
-        response_data = {'message': 'traffic GET request received'}
-        return jsonify(response_data)
-
-    # exception
-    except KeyError as e:
-        # Handle missing field error
-        return f'Missing field error: {e}', 400
-    except Exception as e:
-        # Handle other exceptions
-        return f'Internal server error: {e}', 500
+    # database function ======================================
+    return "traffic input recived and processed"
 
 
 # route for update the traffic in some time period
