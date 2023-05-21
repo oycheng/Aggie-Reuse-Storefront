@@ -7,11 +7,10 @@ import random
 from config import databaseName, location
 
 
-def store(databaseName: str, location: str, barcode):
+def store(databaseName: str, location: str, barcode, tags):
     name = "/dataBase/" + databaseName
     database = Access(databaseName)
-    data = {"barcode" : [barcode], "price" : [10], "reserved": ["false"]}
-    database.store(data, location)
+    database.store(barcode, tagInput = tags)
     database.printDf(location)
 
 
@@ -48,11 +47,13 @@ def get_items(startIndex, endIndex, getTags, getPages, selectTag):
     return response
 
 
-def add_items(image):
+def add_items(image, tags):
     random.seed()  # Initialize random number generator 
     barcode_number = ''.join(str(random.randint(0, 9)) for _ in range(9))
+    print("[" + barcode_number +"]")
+    print("[" + tags +"]")
     imgName = "service/dataBase/img/" + barcode_number + ".png"
     image.save(imgName)
-    store(databaseName, location, barcode)
+    store(databaseName, location, barcode_number, tags)
 
     return 'success'

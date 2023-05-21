@@ -24,9 +24,9 @@ class Access:
             return True
         else:
             return False
-    def _pickleTags(self):
-        tags = input("Enter Tags: ")
-        tags = tags.split()
+    def _pickleTags(self, tagInput = "none none none none none"):
+        tags = tagInput.split()
+        print(tags)
         return pickle.dumps(tags)
     def retrieveTags(self, barcode, location = "inventory"):
         self._extract(location)
@@ -38,13 +38,15 @@ class Access:
         if image != "10":
             image = pickle.dumps(image)
         return image
-    def store(self, barcode, location = "inventory"):
+    def store(self, barcode, location = "inventory", tagInput = "none none none none none"):
         self._extract(location)
         if(not self._dupCheck(barcode)):
             data = {"barcode" : barcode,
                     "reserved": ["false"],
-                    "tags" : [self._pickleTags()],
+                    "tags" : [self._pickleTags(tagInput)],
                     "image" : [self.pickleImage()]}
+                    
+            print(barcode)
             inDataDf = pd.DataFrame(data)
             dbConn = sql.connect(self.dbName)
             try:

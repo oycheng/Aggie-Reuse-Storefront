@@ -40,7 +40,8 @@ def storeItems_get():
 def storeItems_post():
     if 'image' in request.files:
         image = request.files['image']
-        response = add_items(image)
+        tags = request.form.get('tags')
+        response = add_items(image, tags)
         
         if (response == 'success'):
             return 'Image uploaded successfully.'
