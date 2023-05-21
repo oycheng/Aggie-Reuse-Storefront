@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 import sqlite3 as sql
 import pickle
@@ -40,11 +39,12 @@ class Access:
             image = pickle.dumps(image)
         return image
     def store(self, barcode, location):
+        self._extract(location)
         if(not self._dupCheck(barcode)):
-            data = {"barcode" : [barcode],
+            data = {"barcode" : barcode,
                     "reserved": ["false"],
                     "tags" : [self._pickleTags()],
-                    "image" : [self._pickleImage()]}
+                    "image" : [self.pickleImage()]}
             inDataDf = pd.DataFrame(data)
             dbConn = sql.connect(self.dbName)
             try:
@@ -106,8 +106,9 @@ class Access:
     def printDf(self, location):
         self._extract(location)
         data = self.dataDf.to_dict()
-        for key, pickleData in data["tags"].items():
-            data["tags"][key] = pickle.loads(pickleData)
+        if bool(data):
+            for key, pickleData in data["tags"].items():
+                data["tags"][key] = pickle.loads(pickleData)
         print(data)
         
 def Run():
