@@ -1,0 +1,98 @@
+/* CSS styles */
+* {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f1f1f1;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  .header {
+    height: 50vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-image: url('../Images/reUSEBanner.jpg');
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    padding: 20px;
+  }
+
+  .logo {
+      height: 100px;
+      background-color: aliceblue;
+      border-radius: 50%;
+      margin-bottom: 10px;
+  }
+
+  .title {
+    font-size: 3rem;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .subtitle {
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .buttons {
+      flex-grow: 1;
+      display: flex;
+      background-color:  rgb(237,115,101);
+
+  }
+  
+  .split {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    z-index: 1;
+    overflow-x: hidden;
+  }
+
+  .left {
+    text-align: center;
+    left: 0;
+  }
+
+  .right {
+    text-align: center;
+    right: 0;
+  }
+
+  .buttons-container {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .button {
+    font-size: 2.5rem;
+    text-decoration: none;
+    color: rgb(237,115,101);
+    background-color: aliceblue;
+    border: none;
+    cursor: pointer;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+  }
+
+  .button:hover {
+      color: aliceblue;
+      background-color: rgb(237,115,101);
+  }
