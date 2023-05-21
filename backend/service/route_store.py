@@ -25,7 +25,6 @@ def storeItems_get():
 
         # Handle GET request
         response_data = get_items(startIndex, endIndex, getTags, getPages, selectTag)
-        response_data = {'message': 'GET request received'}
         return jsonify(response_data)
     # exception
     except KeyError as e:

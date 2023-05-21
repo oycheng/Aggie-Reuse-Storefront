@@ -1,6 +1,7 @@
 import pandas as pd
 import sqlite3 as sql
 import pickle
+import datetime
 
 barCodeLength = 9
 
@@ -24,9 +25,8 @@ class Access:
             return True
         else:
             return False
-    def _pickleTags(self, tagInput = "none none none none none"):
+    def _pickleTags(self, tagInput):
         tags = tagInput.split()
-        print(tags)
         return pickle.dumps(tags)
     def retrieveTags(self, barcode, location = "inventory"):
         self._extract(location)
@@ -34,19 +34,14 @@ class Access:
         position = list(data["barcode"].values()).index(barcode)
         tag = pickle.loads(data["tags"][position])
         return tag
-    def pickleImage(self, image = "10"):
-        if image != "10":
-            image = pickle.dumps(image)
-        return image
-    def store(self, barcode, location = "inventory", tagInput = "none none none none none"):
+    def store(self, barcode, imageLink, location = "inventory", tagInput = "none none none none none"):
         self._extract(location)
         if(not self._dupCheck(barcode)):
             data = {"barcode" : barcode,
-                    "reserved": ["false"],
                     "tags" : [self._pickleTags(tagInput)],
-                    "image" : [self.pickleImage()]}
-                    
-            print(barcode)
+                    "image" : [imageLink],
+                    "reserved" : ["false"],
+                    "reserve time" : [datetime.datetime.now()]}
             inDataDf = pd.DataFrame(data)
             dbConn = sql.connect(self.dbName)
             try:
@@ -112,7 +107,18 @@ class Access:
             for key, pickleData in data["tags"].items():
                 data["tags"][key] = pickle.loads(pickleData)
         print(data)
-        
+    def getBarcodes(self, location = "inventory"):
+        self._extract(location)
+        data = self.dataDf.to_dict()
+        barcodes = list(data["barcode"].values())
+        return barcodes
+    def getTags(self, location = "inventory"):
+        self._extract(location)
+        data = self.dataDf.to_dict()
+        tags = list()
+        for pickedTags in list(data["tags"].values()):
+            tags.append(pickle.loads(pickedTags))
+        return tags
 def Run():
     controls = ["quit", "show", "add", "remove", "reserve", "unreserve"]
     database = Access()

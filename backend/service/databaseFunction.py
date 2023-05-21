@@ -4,18 +4,19 @@ import logging
 import math
 import barcode
 import random
+import pandas
 from config import databaseName, location
 
 
-def store(databaseName: str, location: str, barcode, tags):
+def store(databaseName: str, location: str, barcode, imgName, tags):
     name = "/dataBase/" + databaseName
     database = Access(databaseName)
-    database.store(barcode, tagInput = tags)
+    database.store(barcode, imgName, location, tagInput = tags)
     database.printDf(location)
 
 
 
-def get_items(startIndex, endIndex, getTags, getPages, selectTag):
+def get_items(startIndex, endIndex, getTags, getPages, selectedTag):
     Barcode = []
     imgURL = []
     Tags = []
@@ -23,28 +24,48 @@ def get_items(startIndex, endIndex, getTags, getPages, selectTag):
     TotalNumber = 0
     pageSize = endIndex - startIndex
 
-    # get all barcode from database =====================================
-    inventory = []
+    name = "/dataBase/" + databaseName
+    database = Access(databaseName)
+
+    # get all barcode from database
+    inventory = database.getBarcodes(location)
 
     if (getTags == "true"):
-        # get total tags from dtatbase  =================================
-        TotalTags = []
+        # get total tags from dtatbase
+        tags2D = database.getTags(location)
+
+        for i in range(len(tags2D)):
+            TotalTags += tags2D[i]
+
+        TotalTags = list(set(TotalTags))
+        TotalTags.remove("none")
     
     if (getPages == "true"):
         TotalNumber = math.ceil(len(inventory) / pageSize)
 
     currentIndex = startIndex
-    for i in range(pageSize):
-        Barcode += [inventory[i]]
-        imgURL += ["/dataBase/img/" + inventory[i] + ".png"]
-        currentTags = [] # get tags of current item from database =======
+    count = 0
+    while count < pageSize and currentIndex < len(inventory):
+        currentTags = database.retrieveTags(inventory[currentIndex]) # get tags of current item from database
+        
+        if (selectedTag == "none" or hasTag(currentTags, selectedTag)):
+            Barcode += [inventory[currentIndex]]
+            imgURL += ["/dataBase/img/" + inventory[currentIndex] + ".png"]
 
-        Tags += [currentTags]
-
-
+            Tags += [currentTags]
+            count += 1
+        currentIndex += 1
 
     response = {"Barcode": Barcode, "URL": imgURL, "Tags": Tags, "TotalTags": TotalTags, "TotalNumber": TotalNumber}
     return response
+
+
+def hasTag(currentTags, selectedTag):
+    for i in range(len(currentTags)):
+        if currentTags[i] == selectedTag:
+            return True
+    
+    return False
 
 
 def add_items(image, tags):
@@ -54,6 +75,6 @@ def add_items(image, tags):
     print("[" + tags +"]")
     imgName = "service/dataBase/img/" + barcode_number + ".png"
     image.save(imgName)
-    store(databaseName, location, barcode_number, tags)
+    store(databaseName, location, barcode_number, imgName, tags)
 
     return 'success'
