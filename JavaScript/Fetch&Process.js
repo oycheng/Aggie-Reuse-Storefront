@@ -3,7 +3,7 @@ var jsonData1, jsonString1, xhr1;
 var pageNumber = 0;
 var pageTotal = 0;
 let itemBarcode = [9], itemTags = [9], itemNames = [9], itemQuantity = [9];
-var sort = "nothing";
+var tag = "nothing";
 
 
 window.addEventListener('load', function() {
@@ -11,9 +11,9 @@ window.addEventListener('load', function() {
   jsonData1 = {
     Start: pageNumber*9,
     End: (pageNumber + 1)*9,
-    TotalTags: T,
-    TotalPages: T,
-    SortBy: sort
+    TotalTags: "True",
+    TotalPages: "True",
+    FilterBy: tag
   };
 
     // Convert JSON to string for the request on page load
@@ -51,7 +51,7 @@ button.addEventListener('click', function() {
             End: pageNumber*9,
             TotalTags: F,
             TotalPages: F,
-            SortBy: sort
+            Filter: tag
         };
 
         // Convert JSON to string for the request on button click
@@ -87,7 +87,7 @@ button.addEventListener('click', function() {
             End: (pageNumber + 1)*9,
             TotalTags: F,
             TotalPages: F,
-            SortBy: sort
+            FilterBy: tag
         };
 
         // Convert JSON to string for the request on button click
@@ -95,10 +95,9 @@ button.addEventListener('click', function() {
 
         // Create a new XMLHttpRequest object for the request on button click
         var xhr3 = new XMLHttpRequest();
-        xhr3.open('GET', ''/store/Items'', true);
+        xhr3.open('GET', '/store/Items', true);
         xhr3.setRequestHeader('Content-Type', 'application/json');
         xhr3.onreadystatechange = function() {
-            ClearArrays();
             if (xhr3.readyState === XMLHttpRequest.DONE && xhr3.status === 200) {
                 var response3 = JSON.parse(xhr3.responseText);
                 console.log(response3);
@@ -113,3 +112,5 @@ button.addEventListener('click', function() {
         xhr3.send(jsonString3);
     }
 });
+
+function UpdateGrid(){}
