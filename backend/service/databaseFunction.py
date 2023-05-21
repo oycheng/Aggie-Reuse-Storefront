@@ -78,3 +78,17 @@ def add_items(image, tags):
     store(databaseName, location, barcode_number, imgName, tags)
 
     return 'success'
+
+
+def reserve_items(barcodes):
+    name = "/dataBase/" + databaseName
+    database = Access(databaseName)
+    for i in range(len(barcodes)):
+        database.reserve(barcodes[i], location)
+
+
+def unreserve_items(barcodes):
+    name = "/dataBase/" + databaseName
+    database = Access(databaseName)
+    for i in range(len(barcodes)):
+        database.unreserve(barcodes[i], location)

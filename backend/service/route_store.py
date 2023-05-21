@@ -79,13 +79,9 @@ def reserve():
         json_payload = request.get_json()
 
         # Access the fields from the JSON payload
-        barcode = json_payload["barcode"]
+        barcodes = json_payload["barcodes"]
 
-        # body
-        #
-        #
-        #
-        #
+        reserve_items(barcodes)
 
         returnData = {'message': 'Item reserved', 'barcode': barcode}
         return jsonify(returnData)
@@ -99,20 +95,16 @@ def reserve():
         return f'Internal server error: {e}', 500
 
 # Cancel Reservation
-@bp.route('/store/reserve', methods=['DELETE'])
+@bp.route('/store/unreserve', methods=['PUT'])
 def cancleReserve():
     try:
         # Get the JSON payload from the request
         json_payload = request.get_json()
 
         # Access the fields from the JSON payload
-        barcode = json_payload["barcode"]
+        barcodes = json_payload["barcodes"]
 
-        # body
-        #
-        #
-        #
-        #
+        unreserve_items(barcodes)
 
         returnData = {'message': 'Reservation canceled', 'barcode': barcode}
         return jsonify(returnData)
