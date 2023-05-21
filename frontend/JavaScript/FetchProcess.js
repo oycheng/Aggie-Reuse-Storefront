@@ -162,30 +162,29 @@ function UpdateGrid(){
     }
 }
 
-var button = document.getElementById('nextButton');
-button.addEventListener('order', function() {
-    if(pageNumber < pageTotal){
-        // Create JSON data for the request on button click
-        pageNumber += 1;
-        var jsonData4 = {
-            Order: ShoppingCart
-        };
+var button = document.getElementById('order');
+button.addEventListener('click', function() {
+    // Create JSON data for the request on button click
+    pageNumber += 1;
+    var jsonData4 = {
+        Order: ShoppingCart
+    };
 
-        // Convert JSON to string for the request on button click
-        var jsonString4 = JSON.stringify(jsonData4);
+    // Convert JSON to string for the request on button click
+    var jsonString4 = JSON.stringify(jsonData4);
 
-        // Create a new XMLHttpRequest object for the request on button click
-        var xhr4 = new XMLHttpRequest();
-        xhr4.open('GET', 'http://127.0.0.1:5000/store/reserve');
-        xhr4.setRequestHeader('Content-Type', 'application/json');
-        xhr4.setRequestHeader('Content-Length', '96');
-        
-        xhr4.onreadystatechange = function() {
-            if (xhr4.readyState === XMLHttpRequest.DONE && xhr4.status === 200) {
-                var response4 = JSON.parse(xhr4.responseText);
-                console.log(response4.imgURL);
-            }
-        };
-        xhr4.send(jsonString4);
-    }
+    // Create a new XMLHttpRequest object for the request on button click
+    var xhr4 = new XMLHttpRequest();
+    xhr4.open('GET', 'http://127.0.0.1:5000/store/reserve');
+    xhr4.setRequestHeader('Content-Type', 'application/json');
+    xhr4.setRequestHeader('Content-Length', '96');
+    
+    xhr4.onreadystatechange = function() {
+        if (xhr4.readyState === XMLHttpRequest.DONE && xhr4.status === 200) {
+            var response4 = JSON.parse(xhr4.responseText);
+            console.log(response4);
+            window.location.reload();
+        }
+    };
+    xhr4.send(jsonString4);
 });
