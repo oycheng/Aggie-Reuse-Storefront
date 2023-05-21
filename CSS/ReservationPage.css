@@ -126,3 +126,20 @@
     .Whitespace{
         height: 1000vh;
     }
+
+    /* Styles for the grid */
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-gap: 20px;
+    }
+  
+    .grid-item {
+        text-align: center;
+    }
+  
+    .grid-item img {
+        width: 100%;
+        height: auto;
+        cursor: pointer; /* Add cursor pointer for clickable images */
+    }
