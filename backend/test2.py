@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import json
 from dataBase import Access
+from databaseFunction import *
 import logging
 
 
@@ -18,13 +19,9 @@ def handle_data():
     elif request.method == 'POST':
         # Handle POST request
         json_payload = request.get_json()
-
         barcode = json_payload["barcode"]
-        database = Access("someOtherDB.db")
-        data = {"barcode" : [barcode], "price" : [10], "reserved": ["false"]}
-        location = "b"
-        database.store(data, location)
-        database.printDf(location)
+        store("database1", "location1", barcode)
+        
         # Process the request data
         # ...
 
@@ -53,3 +50,9 @@ def reserve():
 
 if __name__ == '__main__':
     app.run()
+
+# def store(databaseName: str, location: str, barcode):
+#     database = Access(databaseName)
+#     data = {"barcode" : [barcode], "price" : [10], "reserved": ["false"]}
+#     database.store(data, location)
+#     database.printDf(location)
