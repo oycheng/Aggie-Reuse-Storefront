@@ -1,15 +1,17 @@
 // Global variables for the JSON data and XHR objects
-var jsonData1, jsonData2, jsonData3, jsonData4;
-var jsonString1, jsonString2, jsonString3, jsonString4;
-var xhr1, xhr2, xhr3, xhr4;
+var jsonData1, jsonData2, jsonData3, jsonData4, jsonData5;
+var jsonString1, jsonString2, jsonString3, jsonString4, jsonString5;
+var xhr1, xhr2, xhr3, xhr4, xhr5;
 var pageNumber = 0;
 var pageTotal = 0;
 let itemBarcode = [9], itemQuantity = [9], itemURL = [9];
 let itemTags = [9][5];
+let totalTags = [];
 var itemLength;
 var tag = "none";
 var itemsPerPage = 9;
 let ShoppingCart = [];
+var tagVal;
 
 
 window.addEventListener('load', function() {
@@ -39,10 +41,16 @@ window.addEventListener('load', function() {
                 //replace
                 itemBarcode[i] = response1.Barcode[i];
                 itemURL[i] = response1.imgURL[i];
+
                 // for(var j = 0; j < 5; j++){
                 //     itemTags[i][j] = response1.Tags[i][j];
                 // }
             }
+
+            for (var j = 0; j < response1.TotalTags; j++){
+                totalTags[j] = response1.Tags[j];
+            }
+
             UpdateGrid();
         }
     };
@@ -53,6 +61,8 @@ window.addEventListener('load', function() {
 
 var button = document.getElementById('prevButton');
 button.addEventListener('click', function() {
+    ListAll();
+
     if(pageNumber > 0){
         // Create JSON data for the request on button click
         pageNumber -= 1;
@@ -162,8 +172,8 @@ function UpdateGrid(){
     }
 }
 
-var button = document.getElementById('nextButton');
-button.addEventListener('order', function() {
+var button = document.getElementById('order');
+button.addEventListener('click', function() {
     if(pageNumber < pageTotal){
         // Create JSON data for the request on button click
         pageNumber += 1;
@@ -184,8 +194,62 @@ button.addEventListener('order', function() {
             if (xhr4.readyState === XMLHttpRequest.DONE && xhr4.status === 200) {
                 var response4 = JSON.parse(xhr4.responseText);
                 console.log(response4.imgURL);
+                for (var i = 0; i < itemLength; i++) {
+                    //replace
+                    itemBarcode[i] = response4.Barcode[i];
+                    itemURL[i] = response4.imgURL[i];
+    
+                    // for(var j = 0; j < 5; j++){
+                    //     itemTags[i][j] = response1.Tags[i][j];
+                    // }
+                }
             }
         };
         xhr4.send(jsonString4);
     }
+});
+
+function ListAll() {
+    var select = document.getElementById("filterTag");
+    for (var i = 0; i < totalTags.length; i++) {
+        var opt = totalTags[i];
+        var ls = document.createElement("option");
+        ls.textContent = opt;
+        ls.value = opt;
+        select.appendChild(totalTags[ls]);
+    }
+}
+
+var button = document.getElementById('filter');
+button.addEventListener('click', function() {
+    var tag = document.getElementById("filterTag").value;
+
+    jsonData5 = {
+        Start: pageNumber*9,
+        End: (pageNumber + 1)*9 -1,
+        TotalTags: `true`,
+        TotalPages: `true`,
+        FilterBy: tag
+    };
+
+    // Convert JSON to string for the request on button click
+    var jsonString5 = JSON.stringify(jsonData5);
+
+    // Create a new XMLHttpRequest object for the request on button click
+    var xhr5 = new XMLHttpRequest();
+    xhr5.open('GET', 'http://127.0.0.1:5000/items/get');
+    xhr5.setRequestHeader('Content-Type', 'application/json');
+    xhr5.setRequestHeader('Content-Length', '96');
+    
+    xhr5.onreadystatechange = function() {
+        if (xhr5.readyState === XMLHttpRequest.DONE && xhr5.status === 200) {
+            var response5 = JSON.parse(xhr5.responseText);
+            console.log(response5.imgURL);
+            for (var i = 0; i < itemLength; i++) {
+                itemBarcode[i] = response5.Barcode[i];
+                itemURL[i] = response5.imgURL[i];
+            }
+        }
+    };
+    xhr5.send(jsonString5);
 });
