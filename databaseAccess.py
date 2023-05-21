@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import sqlite3 as sql
+import pickle
 
 barCodeLength = 9
 
@@ -24,11 +25,26 @@ class Access:
             return True
         else:
             return False
-    def store(self, barcode, location):
+    def _pickleTags(self):
+        tags = input("Enter Tags: ")
+        tags = tags.split()
+        return pickle.dumps(tags)
+    def retrieveTags(self, barcode, location):
         self._extract(location)
+        data = self.dataDf.to_dict()
+        position = list(data["barcode"].values()).index(barcode)
+        tag = pickle.loads(data["tags"][position])
+        return tag
+    def pickleImage(self, image = "10"):
+        if image != "10":
+            image = pickle.dumps(image)
+        return image
+    def store(self, barcode, location):
         if(not self._dupCheck(barcode)):
             data = {"barcode" : [barcode],
-                    "reserved": ["false"]}
+                    "reserved": ["false"],
+                    "tags" : [self._pickleTags()],
+                    "image" : [self._pickleImage()]}
             inDataDf = pd.DataFrame(data)
             dbConn = sql.connect(self.dbName)
             try:
@@ -46,12 +62,16 @@ class Access:
             return
         data = self.dataDf.to_dict()
         barcodes = data["barcode"]
-        barcodes_val = list(barcodes.values())
-        position = barcodes_val.index(barcode)
-        for item, itemdata in data.items():
-            itemdata.pop(position)
-            data[item] = itemdata
-        self._update(data, location)
+        position = list(barcodes.values()).index(barcode)
+        if(len(barcodes) == 1):
+            dbConn = sql.connect(self.dbName)
+            dbConn.cursor().execute("DROP TABLE " + location)
+            dbConn.close()
+        else:
+            for item, itemdata in data.items():
+                itemdata.pop(position)
+                data[item] = itemdata
+            self._update(data, location)
     def _update(self, newData, location):
         newDataDf = pd.DataFrame(newData)
         dbConn = sql.connect(self.dbName)
@@ -85,7 +105,10 @@ class Access:
         self._update(data, location)
     def printDf(self, location):
         self._extract(location)
-        print(self.dataDf)
+        data = self.dataDf.to_dict()
+        for key, pickleData in data["tags"].items():
+            data["tags"][key] = pickle.loads(pickleData)
+        print(data)
         
 def Run():
     controls = ["quit", "show", "add", "remove", "reserve", "unreserve"]
