@@ -1,4 +1,3 @@
-
 import numpy as np
 import pandas as pd
 import sqlite3 as sql
@@ -16,10 +15,9 @@ class Access:
         except:
             self.dataDf = pd.DataFrame()
         dbConn.close()
-        
     def _dupCheck(self, barcode):
         if self.dataDf.empty:
-            return
+            return False
         database = self.dataDf.to_dict()
         barcodes = list(database["barcode"].values())
         if barcode in barcodes:
@@ -46,7 +44,6 @@ class Access:
         if not self._dupCheck(barcode):
             print("Item not in inventory")
             return
-        self._extract(location)
         data = self.dataDf.to_dict()
         barcodes = data["barcode"]
         barcodes_val = list(barcodes.values())
@@ -55,11 +52,16 @@ class Access:
             itemdata.pop(position)
             data[item] = itemdata
         self._update(data, location)
+    def _update(self, newData, location):
+        newDataDf = pd.DataFrame(newData)
+        dbConn = sql.connect(self.dbName)
+        newDataDf.to_sql(location, dbConn, if_exists='replace', index=False)
+        dbConn.close()
     def reserve(self, barcode, location):
+        self._extract(location)
         if not self._dupCheck(barcode):
             print("Item does not exist")
             return
-        self._extract(location)
         data = self.dataDf.to_dict()
         barcodes = data["barcode"]
         barcodes_val = list(barcodes.values())
@@ -81,15 +83,10 @@ class Access:
         position = barcodes_val.index(barcode)
         data["reserved"][position] = "false"
         self._update(data, location)
-    def _update(self, newData, location):
-        newDataDf = pd.DataFrame(newData)
-        dbConn = sql.connect(self.dbName)
-        newDataDf.to_sql(location, dbConn, if_exists='replace', index=False)
-        dbConn.close()
     def printDf(self, location):
         self._extract(location)
         print(self.dataDf)
-
+        
 def Run():
     controls = ["quit", "show", "add", "remove", "reserve", "unreserve"]
     database = Access("someDB.db")
@@ -106,10 +103,6 @@ def Run():
         else:
             while (not barIn.isnumeric()) or (len(barIn) != barCodeLength):
                 barIn = input("enter barcode: ")
-                if barIn == "-1":
-                    break
-            if barIn == "-1":
-                break
             if control == controls[2]:
                 database.store(barIn, location)
             elif control == controls[3]:
