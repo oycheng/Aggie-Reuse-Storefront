@@ -2,6 +2,7 @@ from flask import Flask, request, Blueprint, jsonify
 import json
 import logging
 from .databaseFunction import *
+from config import databaseName, location
 
 bp = Blueprint('traffic', __name__)
 # logging.debug(' log message')
