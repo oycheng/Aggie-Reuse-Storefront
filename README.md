@@ -1,1 +1,1 @@
-# hackdavis23
+# Aggie Reuse Storefront
